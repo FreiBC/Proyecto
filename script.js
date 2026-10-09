@@ -1,77 +1,62 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Código existente para animaciones de botones y formularios...
+$(function () {
+  const albumNotes = {
+    sound: "Sounding the Seventh Trumpet (2001) fue el debut de la banda y muestra sus raíces metalcore.",
+    waking: "Waking the Fallen (2003) ayudó a ampliar su audiencia y se convirtió en uno de sus discos más queridos.",
+    city: "City of Evil (2005) marcó un giro hacia el heavy metal y el hard rock, con canciones como “Bat Country”.",
+    nightmare: "Nightmare (2010) fue el primer álbum de estudio publicado después de la muerte de The Rev.",
+    hail: "Hail to the King (2013) se convirtió en uno de sus álbumes más exitosos y dio nombre a uno de sus himnos.",
+    stage: "The Stage (2016) explora el metal progresivo y gira alrededor de preguntas sobre la humanidad y la tecnología.",
+    dream: "Life Is But a Dream... (2023) es una de sus obras más experimentales, con influencias de distintos estilos."
+  };
 
-    const navButtons = document.querySelectorAll('.nav-button');
-    navButtons.forEach(button => {
-        button.addEventListener('mouseover', () => {
-            button.style.transform = 'scale(1.1)';
-        });
-        button.addEventListener('mouseout', () => {
-            button.style.transform = 'scale(1)';
-        });
-    });
+  const excuses = {
+    nightmare: [
+      "Profe, mi tarea entró en modo Nightmare. Estoy negociando su regreso con el coro.",
+      "La hice, pero The Rev la está cuidando en otra dimensión. Le mando saludos."
+    ],
+    bat: [
+      "Profe, iba a entregar la tarea, pero me desvié rumbo a Bat Country. El GPS tampoco entendió el riff.",
+      "Mi tarea tomó un giro inesperado y ahora está viajando por el desierto. Muy buen álbum, pésima logística."
+    ],
+    heaven: [
+      "Profe, mi tarea tuvo un pequeño Piece of Heaven y se quedó descansando. Yo también, aparentemente.",
+      "La tarea estaba lista, pero empezó a contar una historia larguísima. Para el final ya era otro periodo."
+    ],
+    stage: [
+      "Profe, mi tarea está en The Stage: hay luces, hay concepto... todavía no hay archivo adjunto.",
+      "La tarea se volvió experimental. Ni yo sé qué género de archivo es, pero prometo encontrarlo."
+    ]
+  };
 
-    const ctaButton = document.querySelector('.cta-button');
-    if (ctaButton) {
-        ctaButton.addEventListener('mouseover', () => {
-            ctaButton.style.transform = 'scale(1.1)';
-        });
-        ctaButton.addEventListener('mouseout', () => {
-            ctaButton.style.transform = 'scale(1)';
-        });
+  $(".album-card").on("click", function () {
+    const albumId = $(this).data("album");
+    const note = albumNotes[albumId];
+    if (note) {
+      $("#album-detail").text(note);
+      $(".album-card").attr("aria-pressed", "false");
+      $(this).attr("aria-pressed", "true");
     }
+  });
 
-    const registerForm = document.getElementById('register-form');
-    if (registerForm) {
-        registerForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
-            const password = document.getElementById('reg-password').value;
+  $("#excuse-button").on("click", function () {
+    const options = excuses[$("#mood-select").val()];
+    const current = $("#excuse-output").text();
+    let next = options[Math.floor(Math.random() * options.length)];
 
-            if (name && email && password) {
-                alert('¡Registro exitoso! Te contactaremos pronto.');
-                registerForm.reset();
-            } else {
-                alert('Por favor, completa todos los campos.');
-            }
-        });
+    if (options.length > 1 && next === current) {
+      next = options[(options.indexOf(next) + 1) % options.length];
     }
+    $("#excuse-output").text(`“${next}”`);
+  });
 
-    const contactForm = document.getElementById('contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const message = document.getElementById('message').value;
+  $(".menu-toggle").on("click", function () {
+    const isOpen = $(this).attr("aria-expanded") === "true";
+    $(this).attr("aria-expanded", String(!isOpen));
+    $("#main-nav").toggleClass("is-open", !isOpen);
+  });
 
-            if (name && email && message) {
-                alert('¡Mensaje enviado! Gracias por contactarnos.');
-                contactForm.reset();
-            } else {
-                alert('Por favor, completa todos los campos.');
-            }
-        });
-    }
-
-    // Nuevo código para el menú de hamburguesa
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-
-    if (menuToggle && navLinks) {
-        menuToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('is-active');
-            menuToggle.classList.toggle('is-active');
-        });
-
-        // Ocultar el menú al hacer clic en un enlace (para mejor UX en móviles)
-        const navLinksList = navLinks.querySelectorAll('a');
-        navLinksList.forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('is-active');
-                menuToggle.classList.remove('is-active');
-            });
-        });
-    }
+  $("#main-nav a").on("click", function () {
+    $(".menu-toggle").attr("aria-expanded", "false");
+    $("#main-nav").removeClass("is-open");
+  });
 });
